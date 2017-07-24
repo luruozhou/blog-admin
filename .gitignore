@@ -43,7 +43,7 @@ bower_components/
 
 gdt/
 
-.dist/
-.dest/
+dist/
+dest/
 rw.json
 *.rdb
