@@ -1,8 +1,10 @@
 import * as koa from 'koa';
 let app = new koa();
-
+function log(thing) {
+    console.log('thing', thing)
+}
 app.use((ctx)=> {
-    let k:string =123;
+    let k:string ='';
     ctx.body = k;
 });
 

@@ -4,9 +4,15 @@
     "target": "es5",        //目标代码类型
     "noImplicitAny": true, //在表达式和声明上有隐含的'any'类型时报错。
     "preserveConstEnums": true,
+    "strict":true,
+    "declaration": false,
+    "removeComments": true,
+    "noEmitOnError": true,
+    "noLib": false,
+    "experimentalDecorators": true,
     "sourceMap": true,     //用于debug
     "outDir":"./dest",     //重定向输出目录。
-    "watch":false            //在监视模式下运行编译器。会监视输出文件，在它们改变时重新编译。
+    "watch":true            //在监视模式下运行编译器。会监视输出文件，在它们改变时重新编译。
   },
   "include":[
     "./src/**/*"
