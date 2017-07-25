@@ -136,7 +136,7 @@ CommandResolver.prototype.resolve = function(callback) {
 
     fs.stat(localCmdPath, function(err, stats) {
         if (err) {
-            Watcher.warn(util.format('推荐安装 "%s" 命令到项目中, 运行"%s"', Chalk.green(_this.pkgName), Chalk.green(util.format('cd zm-www && npm install %s', _this.pkgName))), false);
+            Watcher.warn(util.format('推荐安装 "%s" 命令到项目中, 运行"%s"', Chalk.green(_this.pkgName), Chalk.green(util.format('cd blog-admin && npm install %s', _this.pkgName))), false);
 
             _this.emit('resolved', err);
             return callback && callback(err);
@@ -239,13 +239,14 @@ Watcher.prototype._childErrorHandler = function(err) {
 Watcher.log = function(message, rwMarker) {
     var time = '[' + new Date().toTimeString().match(/\S+/)[0] + '] ';
     var leadingSpaces = Array(time.length + 1).join(' ');
-    console.log(Chalk.gray(time) + (rwMarker === false ? '': Chalk.yellow('rw ')) + message.replace(/\n(?!$)/g, leadingSpaces));
+    console.log(time,message)
+    // console.log(Chalk.gray(time) + (rwMarker === false ? '' : Chalk.yellow('rw ')) + message.replace(/\n(?!$)/g, leadingSpaces));
 };
 
 Watcher.warn = function(message, rwMarker) {
     var time = '[' + new Date().toTimeString().match(/\S+/)[0] + '] ';
     var leadingSpaces = Array(time.length + 1).join(' ');
-    console.error(Chalk.red(time) + (rwMarker === false ? '': Chalk.yellow('rw ')) + message.replace(/\n(?!$)/g, leadingSpaces));
+    console.error(Chalk.red(time) + (rwMarker === false ? '' : Chalk.yellow('rw ')) + message.replace(/\n(?!$)/g, leadingSpaces));
 };
 
 
@@ -302,8 +303,8 @@ function Sweater(watchers, options) {
 
     this.warmUpTimer = null;
     this.nodeInstance = null; // node 实例
-    this.running = false;     // node 运行状态
-    this.restarting = false;  // node 重启状态
+    this.running = false; // node 运行状态
+    this.restarting = false; // node 重启状态
 }
 
 Sweater.prototype.init = function(callback) {
@@ -391,6 +392,9 @@ Sweater.prototype.warmUp = function() {
         var lineEnded = true;
         _this.nodeInstance.stdout.on('data', function(data) {
             Sweater.log(data, false, false, lineEnded);
+            if(/listening on/.test(data)){
+                console.log('\n\n\n')
+            }
             lineEnded = /\n$/.test(data);
         });
 

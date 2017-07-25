@@ -2,7 +2,8 @@ import * as koa from 'koa';
 let app = new koa();
 
 app.use((ctx)=> {
-    ctx.body = 'kkk111';
+    let k:string =123;
+    ctx.body = k;
 });
 
 app.listen(3000,()=>{

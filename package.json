@@ -2,7 +2,8 @@
   "name": "blog-admin",
   "version": "1.0.0",
   "description": "",
-  "main": "./dest/app.js",
+  "main": "./dest/app",
+  "typings": "typings/index.d.ts",
   "scripts": {
     "start": "node rw.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,6 +19,7 @@
     "typescript": "^2.4.2"
   },
   "dependencies": {
+    "@types/koa": "^2.0.39",
     "koa": "^2.3.0"
   }
 }
