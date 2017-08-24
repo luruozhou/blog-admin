@@ -1,33 +1,47 @@
-let gulp = require('gulp');
-let ts = require('gulp-typescript');
-let tsp = ts.createProject('tsconfig.json'); //使用tsconfig.json文件配置tsc
-let exec = require('child_process').exec;
+var gulp = require("gulp");
+var babel = require("gulp-babel");
+var plumber = require('gulp-plumber');
+var path = require("path");
+var glob = require('glob');
 
-let child;
-//目录常量
-const PATHS = {
-    scripts: ['./src/**/*.ts', './app.ts'],
-    output: './dest',
-};
-//编译ts文件
-gulp.task('build-ts', ['restart'], function () {
-    return gulp.src(PATHS.scripts)
-        .pipe(tsp())
-        .pipe(gulp.dest(PATHS.output));
+
+gulp.task("compile-server", function() {
+    return gulp.src("server/**/*.js")
+        .pipe(plumber())
+        .pipe(babel())
+        .pipe(gulp.dest("dest/server"));
 });
-//监视ts文件变化
-gulp.task('watch-ts', ['build-ts'], function () {
-    gulp.watch(PATHS.scripts, ['build-ts']);
+
+gulp.task("compile-routes", function() {
+    return gulp.src("routes/**/*.js")
+        .pipe(plumber())
+        .pipe(babel())
+        .pipe(gulp.dest("dest/routes"));
 });
-//自动重启服务器
-gulp.task('restart', function () {
-    child = exec('supervisor -w dest ./dest/app.js', (error, stdout, stderr)=> {
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
-        if (error !== null) {
-            console.log(`exec error: ${error}`);
-        }
-    });
+
+gulp.task('build',  function() {
+
+    gulp.start('compile-server');
+    gulp.start('compile-routes');
+    gulp.watch('server/**/*.js', ['compile-server']);
+    gulp.watch('routes/**/*.js', ['compile-routes']);
 });
-//开发任务
-gulp.task('dev', ['build-ts', 'restart', 'watch-ts']);
+
+gulp.task("prod-server", function() {
+    return gulp.src("server/**/*.js")
+        .pipe(plumber())
+        .pipe(babel())
+        .pipe(gulp.dest("dest-tmp/server"));
+});
+
+gulp.task("prod-routes", function() {
+    return gulp.src("routes/**/*.js")
+        .pipe(plumber())
+        .pipe(babel())
+        .pipe(gulp.dest("dest-tmp/routes"));
+});
+
+gulp.task('prod',function() {
+    gulp.start('prod-server');
+    gulp.start('prod-routes');
+});

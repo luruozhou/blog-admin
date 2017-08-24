@@ -1,0 +1,134 @@
+{
+    "files": [
+        {
+            "entry": "views/static/index/index",
+            "template": "views/page/index.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/static/admin/addArticle/addArticle",
+            "template": "views/page/admin/addArticle.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/widget/admin/header/header",
+            "template": "views/widget/admin/header/header.tpl",
+            "type": "widget"
+        },
+        {
+            "entry": "views/widget/admin/footer/footer",
+            "template": "views/widget/admin/footer/footer.tpl",
+            "type": "widget"
+        },
+        {
+            "entry": "views/widget/admin/asider/asider",
+            "template": "views/widget/admin/asider/asider.tpl",
+            "type": "widget"
+        },
+        {
+            "entry": "views/static/article-list/article-list",
+            "template": "views/page/article-list.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/static/article-detail/article-detail",
+            "template": "views/page/article-detail.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/static/test1/test1",
+            "template": "views/page/test1.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/static/aa/test1/test1",
+            "template": "views/page/aa/test1.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/static/aa/test1/test1",
+            "template": "views/page/aa/test1.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/static/aa/aa",
+            "template": "views/page/aa.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/static/aa/aa",
+            "template": "views/page/aa.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/widget/test/test",
+            "template": "views/widget/test/test.tpl",
+            "type": "widget"
+        },
+        {
+            "entry": "views/widget/test/test",
+            "template": "views/widget/test/test.tpl",
+            "type": "widget"
+        },
+        {
+            "entry": "views/widget/layout/header/header",
+            "template": "views/widget/layout/header/header.tpl",
+            "type": "widget"
+        },
+        {
+            "entry": "views/static/test/add/bb/bb",
+            "template": "views/page/test/add/bb.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/static/test/add/aa/aa",
+            "template": "views/page/test/add/aa.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/static/test/add/c/c",
+            "template": "views/page/test/add/c.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/static/test/add/cdd/cdd",
+            "template": "views/page/test/add/cdd.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/widget/components/replySomebody/replySomebody",
+            "template": "views/widget/components/replySomebody/replySomebody.tpl",
+            "type": "widget"
+        },
+        {
+            "entry": "views/widget/components/cover/cover",
+            "template": "views/widget/components/cover/cover.tpl",
+            "type": "widget"
+        },
+        {
+            "entry": "views/widget/components/cover-test/cover-test",
+            "template": "views/widget/components/cover-test/cover-test.tpl",
+            "type": "widget"
+        },
+        {
+            "entry": "views/widget/components/register/register",
+            "template": "views/widget/components/register/register.tpl",
+            "type": "widget"
+        },
+        {
+            "entry": "views/static/login/login",
+            "template": "views/page/login.tpl",
+            "type": "page"
+        },
+        {
+            "entry": "views/widget/components/loading/loading",
+            "template": "views/widget/components/loading/loading.tpl",
+            "type": "widget"
+        },
+        {
+            "entry": "views/static/resume/lijingwen/lijingwen",
+            "template": "views/page/resume/lijingwen.tpl",
+            "type": "page"
+        }
+    ]
+}

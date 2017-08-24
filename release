@@ -1,0 +1,24 @@
+echo 'npm installing...'
+
+npm install || exit
+
+echo 'releasing...'
+
+fis3 release prod -r ./views -d ./dest-tmp/views
+gulp prod
+
+echo 'removing old files...'
+
+rm -rf dest/views
+rm -rf dest/server
+rm -rf dest/routes
+
+echo 'copying new files...'
+
+cp -Rf dest-tmp/* dest
+
+echo 'cleaning up...'
+
+rm -rf dest-tmp
+
+pm2 startOrReload pm2.json

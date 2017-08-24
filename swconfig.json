@@ -1,7 +1,0 @@
-{
-    "warmUpTimeout": 100,
-    "globs": [
-        "./dest/**"
-    ],
-    "ignored": null
-}
