@@ -1,7 +1,7 @@
 import {userProvider} from "../modules/core/userProvider";
-import  * as User from "../modules/user";
+import * as User from "../modules/user";
 import * as Validator from '../utils/Validator';
-import "../modules/core/jsonWebToken";
+import {getToken} from "../modules/core/jsonWebToken";
 
 export var routeSettings = {
     login: {
@@ -13,8 +13,8 @@ export var routeSettings = {
         notAuthentication: true
     },
     logout: {
-        method: "post",
-    },
+        method: "post"
+    }
 };
 
 /**
@@ -23,26 +23,29 @@ export var routeSettings = {
  * password:string
  */
 export function login(req, res) {
-    Validator.validate(req.body, ['userName', 'password'],{
-        userName:/^.+$/,
-        password:/^.{6,}$/
-    });
+    Validator.validate(req.body, ['userName', 'password'],{     userName:/^.+$/,
+       password:/^.{6,}$/ });
 
     return userProvider
         .authenticate(req, res)
-        .then(data=> {
+        .then(async data => {
             if (data && data.userRecord) {
-                return 'ok';
+                let secretData = {
+                    uid: data.uid,
+                    random: new Date().getTime()
+                }
+                let access_token = getToken(secretData);
+                let refresh_token = getToken(secretData);
+                await userProvider.saveToken(access_token,refresh_token,data.uid);
+                return {access_token, refresh_token,};
             } else {
                 throw '无效的用户名或密码.';
             }
         })
-        .catch(err=> {
+        .catch(err => {
             console.log("error:", err);
             req.session['uid'] = null;
-            return {
-                msg: err
-            }
+            return {msg: err}
         })
 }
 
@@ -54,29 +57,28 @@ export function login(req, res) {
  */
 export function register(req, res) {
     let args = req.body;
-    Validator.validate(args, ['userName', 'password','nickName'],{
-        userName:/^.+$/,
-        password:/^.{6,}$/,
-        nickName:/^.+$/,
+    Validator.validate(args, [
+        'userName', 'password', 'nickName'
+    ], {
+        userName: /^.+$/,
+        password: /^.{6,}$/,
+        nickName: /^.+$/
     });
 
-    return User.register(args)
-        .then(uid=> {
+    return User
+        .register(args)
+        .then(uid => {
             if (uid) {
                 req.session.uid = uid;
                 return '注册成功.';
             } else {
-                return {
-                    msg: '注册异常.',
-                };
+                return {msg: '注册异常.'};
             }
         })
-        .catch(err=> {
+        .catch(err => {
             console.log("error:", err);
             req.session['uid'] = null;
-            return {
-                msg: err
-            }
+            return {msg: err}
         })
 }
 

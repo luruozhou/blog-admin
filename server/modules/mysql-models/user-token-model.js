@@ -23,6 +23,10 @@ var Model = sequelize.define(
             type: Sequelize.DATE,
             allowNull: false,
         },
+        refresh_expired_time: {
+            type: Sequelize.DATE,
+            allowNull: false,
+        },
     }, {
         tableName: 'user_token',
         timestamps: true,

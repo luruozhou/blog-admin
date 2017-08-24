@@ -1,9 +1,11 @@
-import  UserModel from "../mysql-models/users-model";
+import UserModel from "../mysql-models/users-model";
+import UserTokenModel from "../mysql-models/user-token-model";
 import * as Lodash from 'lodash';
 import {Promise} from "../../libs/Promise";
 import * as Bcrypt from 'bcrypt-nodejs';
 import * as User from '../user';
 import {Permission} from './permissionProvider';
+import * as moment from "moment";
 
 function buildRequestUser(userRecord, basePermission) {
     var userPermission;
@@ -21,11 +23,7 @@ function buildRequestUser(userRecord, basePermission) {
         })
         .then(permission => {
             userPermission = permission;
-            return {
-                uid: userRecord.id,
-                userRecord,
-                permission: userPermission
-            };
+            return {uid: userRecord.id, userRecord, permission: userPermission};
         })
 }
 
@@ -33,35 +31,32 @@ function buildRequestUser(userRecord, basePermission) {
  * 登陆时验证
  */
 export var userProvider = {
-    authenticate: (req, res) => {
-        var uid = req.session['uid'];
-        var {
-            userName,
-            password
-        }= req.body;
-        var args = Lodash.clone(req.body);
-        if (args.password) {
-            args.password = args.password.slice(0, 2) + '******' + args.password.slice(-2);
-        }
+    authenticate: async(req, res) => {
+        let access_token = req.body.access_token || req.headers.access_token || req.query.access_token;
+        let uid;
+        var {userName, password} = req.body;
 
         var where = {};
-        if (userName || uid) {
-            if (userName) {
-                // Validator.validateMobile(mobile, 'mobile');
+        let userTokenRecord;
+        if (userName || access_token) {
+            if (access_token) {
+                userTokenRecord = await UserTokenModel.find({"access_token": access_token});
+                if (userTokenRecord) {
+                    where.id = userTokenRecord.user_id;
+                } else {
+                    throw "无效的token";
+                }
+            } else if (userName) {
                 where.user_name = userName;
-            } else if (uid) {
-                where.id = uid;
             } else {
-                throw "PermissionDenied";
+                throw "没有登录凭据";
             }
-            console.log(where,'===')
             // 普通登录验证
             var authPromise = Promise
                 .resolve(UserModel.find({where}))
                 .then(userRecord => {
                     if (!userRecord) {
-                        req.session['uid'] = null;
-                        throw "UserNotExists";
+                        throw "用户不存在";
                     }
                     if (password) {
                         // Validator.validatePassword(password, 'password');
@@ -74,69 +69,59 @@ export var userProvider = {
                                 return [userRecord, null];
                             });
                     } else {
-                        // return [userRecord, Permission.smsVerified];
                         return [userRecord, null];
                     }
                 });
 
-            return authPromise
-                .then(([userRecord, basePermission]) => {
-                    uid = userRecord.id;
-                    userName = userRecord.userName;
-
-                    // return buildRequestUser(userRecord, basePermission);
-                    return buildRequestUser(userRecord, basePermission);
-                })
-                .then(user => {
-                    req.session['uid'] = uid;
-                    // processRequest(req, res, user);
-                    return user;
-                });
+            return authPromise.then(([userRecord, basePermission]) => {
+                uid = userRecord.id;
+                userName = userRecord.userName;
+                return buildRequestUser(userRecord, basePermission);
+            }).then(user => {
+                req.session['uid'] = uid;
+                return user;
+            });
         } else {
-            return Promise.resolve({
-                uid: undefined,
-                userRecord: undefined,
-                permission: Permission.none
-            })
+            return Promise.resolve({uid: undefined, userRecord: undefined, permission: Permission.none})
         }
 
     },
     get: (req, res) => {
         var uid = req.session['uid'];
-        var {
-            userName,
-            password
-        } = req.body;
-        // if (userName && password) {
-        //     return userProvider
-        //         .authenticate(req, res)
-        //         .fail(() => {
-        //             uid = undefined;
-        //             return getUser();
-        //         });
-        // } else {
-        //     return getUser();
-        // }
+        var {userName, password} = req.body;
+
         return getUser();
 
         function getUser() {
             return Promise
-                .resolve(uid && UserModel.find({where: {id: uid}}))
+                .resolve(uid && UserModel.find({
+                where: {
+                    id: uid
+                }
+            }))
                 .then(userRecord => {
                     if (userRecord) {
                         return buildRequestUser(userRecord, undefined);
                     } else {
-                        return {
-                            uid: undefined,
-                            userRecord: undefined,
-                            permission: Permission.none
-                        };
+                        return {uid: undefined, userRecord: undefined, permission: Permission.none};
                     }
                 })
                 .then(user => {
                     return user;
                 });
         }
+    },
+    saveToken(access_token, refresh_token, user_id) {
+        let now = new Date();
+        let oneHour = 60 * 60 * 1000;
+        return UserTokenModel.create({
+            access_token,
+            refresh_token,
+            user_id,
+            expired_time: new Date(now.getTime() + oneHour * 2),
+            refresh_expired_time: new Date(now.getTime() + oneHour * 24 * 7),
+            refresh_time: now
+        })
     },
     /**
      * 清除用户登录状态
@@ -159,4 +144,3 @@ export var passwordUtil = {
             });
     }
 };
-
