@@ -32,8 +32,7 @@ function buildRequestUser(userRecord, basePermission) {
  */
 export var userProvider = {
     authenticate: async(req, res) => {
-        let access_token = req.body.access_token || req.headers.access_token || req.query.access_token;
-        console.log(access_token,'===token',req.headers,req.header("access_token"));
+        let access_token = req.body.access_token || req.headers["access-token"] || req.query.access_token;
         let uid;
         var {userName, password} = req.body;
 
@@ -46,7 +45,6 @@ export var userProvider = {
                 //如果token表里能查到记录
                 if (userTokenRecord) {
                     //如果没过期
-                    console.log(111,userTokenRecord.access_token,access_token,userTokenRecord.access_token==access_token)
                     if(new Date() >= userTokenRecord.expired_time){
                         where.id = userTokenRecord.user_id;
                     }else{
@@ -54,7 +52,6 @@ export var userProvider = {
                         throw new ApiError({errorCode: ErrorCode.accessTokenExpired, message: "token过期"});
                     }
                 } else {
-                    console.log(111222)
                     throw new ApiError({errorCode: ErrorCode.accessTokenMissMatch, message: "无效的token"});
                 }
             } else if (userName) {
@@ -138,7 +135,7 @@ export var userProvider = {
      * 清除用户登录状态
      */
     logout: async (req) => {
-        let access_token = req.body.access_token || req.headers.access_token || req.query.access_token;
+        let access_token = req.body.access_token || req.headers["access-token"] || req.query.access_token;
         await UserTokenModel.destroy({where:{access_token}});
     }
 
