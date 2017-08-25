@@ -3,6 +3,7 @@ import * as User from "../modules/user";
 import * as Validator from '../utils/Validator';
 import {getToken} from "../modules/core/jsonWebToken";
 import ApiError, {ErrorCode} from "../modules/core/apiError";
+import {Permission} from '../../server/modules/core/permissionProvider';
 
 export var routeSettings = {
     login: {
@@ -15,6 +16,10 @@ export var routeSettings = {
     },
     logout: {
         method: "post"
+    },
+    getInfo: {
+        method: "post",
+        permission: Permission.user
     }
 };
 
@@ -45,6 +50,14 @@ export function login(req, res) {
                 return {access_token, refresh_token,};
             }
         })
+}
+/**
+ * 获取用户信息接口
+ */
+export function getInfo(req, res) {
+    let user = req.user;
+    let userInfo = user.userRecord || {};
+    return userInfo
 }
 
 /**
