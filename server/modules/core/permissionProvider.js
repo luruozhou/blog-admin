@@ -10,7 +10,6 @@ export var permissionProvider = {
         if (userPermission && userPermission.details.length > 0) {
             return Permission.verify(userPermission || Permission.none, requiredPermission);
         }
-        throw "PermissionDenied";
     }
 };
 

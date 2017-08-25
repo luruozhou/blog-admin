@@ -1,5 +1,6 @@
 import Path from "path";
 import IO from "./io.js";
+import '../modules/mysql-models/model-relations';
 import {userProvider} from "../modules/core/userProvider";
 import {permissionProvider} from "../modules/core/permissionProvider";
 import ApiError, {ErrorCode} from "../modules/core/apiError";

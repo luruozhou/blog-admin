@@ -2,7 +2,6 @@ var express = require('express');
 var config = require("./dest/server/config")
 var log = require('./dest/server/logger');
 var Path = require("path")
-var PAGERouter = require("./dest/server/utils/page-router.js").Router;
 var APIRouter = require("./dest/server/utils/api-router.js").Router;
 var bodyParser = require('body-parser');
 var multer = require('multer');
@@ -30,7 +29,6 @@ app.use(cookieParser());
 app.use(sessionMiddleware);
 
 
-// new PAGERouter(app);
 new APIRouter(app);
 
 app.all('*',(req,res)=>{
