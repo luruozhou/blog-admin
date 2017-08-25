@@ -17,6 +17,7 @@ export var routeSettings = {
     },
     querySectionArticlesByTab: {
         method: "post",
+        permission: Permission.adminHomePage
         },
 };
 

@@ -5,6 +5,7 @@ import {Promise} from "../../libs/Promise";
 import * as Bcrypt from 'bcrypt-nodejs';
 import * as User from '../user';
 import {Permission} from './permissionProvider';
+import ApiError, {ErrorCode} from "./apiError";
 import * as moment from "moment";
 
 function buildRequestUser(userRecord, basePermission) {
@@ -44,19 +45,19 @@ export var userProvider = {
                 if (userTokenRecord) {
                     where.id = userTokenRecord.user_id;
                 } else {
-                    throw "无效的token";
+                    throw new ApiError({errorCode: ErrorCode.accessTokenMissMatch, message: "无效的token"});
                 }
             } else if (userName) {
                 where.user_name = userName;
             } else {
-                throw "没有登录凭据";
+                throw new ApiError({errorCode: ErrorCode.hasNotLogin, message: "没有登录凭据"});
             }
             // 普通登录验证
             var authPromise = Promise
                 .resolve(UserModel.find({where}))
                 .then(userRecord => {
                     if (!userRecord) {
-                        throw "用户不存在";
+                        throw new ApiError({errorCode: ErrorCode.userNotExist, message: "用户不存在"});
                     }
                     if (password) {
                         // Validator.validatePassword(password, 'password');
@@ -139,7 +140,7 @@ export var passwordUtil = {
             .resolve(Bcrypt.compareSync(pwd, hashed))
             .then(result => {
                 if (!result) {
-                    throw "PasswordMismatch";
+                    throw new ApiError({errorCode: ErrorCode.passwordMissMatch, message: "密码不匹配"});
                 }
             });
     }

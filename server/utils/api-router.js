@@ -2,6 +2,7 @@ import Path from "path";
 import IO from "./io.js";
 import {userProvider} from "../modules/core/userProvider";
 import {permissionProvider} from "../modules/core/permissionProvider";
+import ApiError, {ErrorCode} from "../modules/core/apiError";
 
 const apiPrefix = '/api/';
 
@@ -42,19 +43,18 @@ exports.Router = function (app) {
                 authPromise = userProvider.authenticate(req, res)
             }
             return authPromise
-                .then(user=> {
+                .then(user => {
                     // 权限判断
+                    console.log(user.permission, routeSetting.permission)
                     let isVerify = permissionProvider.verifyRouter(user && user.permission, routeSetting.permission);
                     if (!isVerify) {
-                        res.redirect('/');
-                        return;
+                        throw new ApiError({errorCode: ErrorCode.noPermission, message: "权限不足"});
                     }
                     req.user = user;
                 })
                 .then(function () {
                     if (!routeHandler) {
-                        res.sendStatus(403);
-                        return;
+                        throw new ApiError({errorCode: ErrorCode.controllerNotExist, message: "没有对应接口controller"});
                     }
                     return routeHandler(req, res)
                 })
@@ -64,27 +64,54 @@ exports.Router = function (app) {
                 .then(function (data) {
                     res.send(data);
                 })
-                .catch(error=>{
-                    res.send(getJson({msg:error}));
+                .catch(error => {
+                    let errorData;
+                    errorData = getJson(null, error);
+                    res.send(errorData);
                 })
         })
     }
 }
 
-function getJson(data) {
-    if (!data || data.msg) {
-        return {
-            code: 0,
-            data: null,
-            msg: data.msg || "error"
+function getJson(data, error) {
+    let res;
+    if (error) {
+        if (typeof error ==='string') {
+            res={
+                code:0,
+                data:null,
+                message:error
+            }
+        }else if(error instanceof ApiError){
+            if(error.errorCode ===ErrorCode.accessTokenExpired){
+                res={
+                    code:2,
+                    data:null,
+                    message:error.message
+                }
+            }else{
+                res={
+                    code:0,
+                    data:null,
+                    message:error.message
+                }
+            }
+        }else{
+            res={
+                code:0,
+                data:null,
+                message:error.message
+            }
         }
-    } else {
-        return {
-            code: 1,
-            data: data,
-            msg: ""
+    }else{
+        res = {
+            code:1,
+            data,
+            message: ""
         }
     }
+
+    return res;
 
 }
 
