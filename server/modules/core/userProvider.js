@@ -45,6 +45,7 @@ export var userProvider = {
                 //如果token表里能查到记录
                 if (userTokenRecord) {
                     //如果没过期
+                    console.log(111,userTokenRecord.access_token,access_token,userTokenRecord.access_token==access_token)
                     if(new Date() >= userTokenRecord.expired_time){
                         where.id = userTokenRecord.user_id;
                     }else{
@@ -52,6 +53,7 @@ export var userProvider = {
                         throw new ApiError({errorCode: ErrorCode.accessTokenExpired, message: "token过期"});
                     }
                 } else {
+                    console.log(111222)
                     throw new ApiError({errorCode: ErrorCode.accessTokenMissMatch, message: "无效的token"});
                 }
             } else if (userName) {

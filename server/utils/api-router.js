@@ -84,7 +84,6 @@ function getJson(data, error) {
                 message: error
             }
         } else if (error instanceof ApiError) {
-            console.log(error.errorCode,ErrorCode.accessTokenMissMatch,'===')
             if (error.errorCode === ErrorCode.accessTokenExpired || error.errorCode === ErrorCode.accessTokenMissMatch) {
                 res = {
                     code: 2,
