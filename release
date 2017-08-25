@@ -4,12 +4,10 @@ npm install || exit
 
 echo 'releasing...'
 
-fis3 release prod -r ./views -d ./dest-tmp/views
 gulp prod
 
 echo 'removing old files...'
 
-rm -rf dest/views
 rm -rf dest/server
 rm -rf dest/routes
 

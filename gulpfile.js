@@ -46,14 +46,30 @@ gulp.task('build',  function() {
 gulp.task("prod-server", function() {
     return gulp.src("server/**/*.js")
         .pipe(plumber())
-        .pipe(babel())
+        .pipe(babel({
+            presets: ['es2015', 'stage-0'],
+            "plugins": [
+                ["transform-runtime", {
+                    "polyfill": false,
+                    "regenerator": true
+                }]
+            ]
+        }))
         .pipe(gulp.dest("dest-tmp/server"));
 });
 
 gulp.task("prod-routes", function() {
     return gulp.src("routes/**/*.js")
         .pipe(plumber())
-        .pipe(babel())
+        .pipe(babel({
+            presets: ['es2015', 'stage-0'],
+            "plugins": [
+                ["transform-runtime", {
+                    "polyfill": false,
+                    "regenerator": true
+                }]
+            ]
+        }))
         .pipe(gulp.dest("dest-tmp/routes"));
 });
 
