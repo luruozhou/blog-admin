@@ -46,7 +46,6 @@ exports.Router = function (app) {
             return authPromise
                 .then(user => {
                     // 权限判断
-                    console.log(user.permission, routeSetting.permission)
                     let isVerify = permissionProvider.verifyRouter(user && user.permission, routeSetting.permission);
                     if (!isVerify) {
                         throw new ApiError({errorCode: ErrorCode.noPermission, message: "权限不足"});
@@ -77,36 +76,38 @@ exports.Router = function (app) {
 function getJson(data, error) {
     let res;
     if (error) {
-        if (typeof error ==='string') {
-            res={
-                code:0,
-                data:null,
-                message:error
+        console.log(1,error instanceof ApiError,error instanceof Error)
+        if (typeof error === 'string') {
+            res = {
+                code: 0,
+                data: null,
+                message: error
             }
-        }else if(error instanceof ApiError){
-            if(error.errorCode ===ErrorCode.accessTokenExpired){
-                res={
-                    code:2,
-                    data:null,
-                    message:error.message
+        } else if (error instanceof ApiError) {
+            console.log(error.errorCode,ErrorCode.accessTokenMissMatch,'===')
+            if (error.errorCode === ErrorCode.accessTokenExpired || error.errorCode === ErrorCode.accessTokenMissMatch) {
+                res = {
+                    code: 2,
+                    data: null,
+                    message: error.message
                 }
-            }else{
-                res={
-                    code:0,
-                    data:null,
-                    message:error.message
+            } else {
+                res = {
+                    code: 0,
+                    data: null,
+                    message: error.message
                 }
             }
-        }else{
-            res={
-                code:0,
-                data:null,
-                message:error.message
+        } else {
+            res = {
+                code: 0,
+                data: null,
+                message: error.message
             }
         }
-    }else{
+    } else {
         res = {
-            code:1,
+            code: 1,
             data,
             message: ""
         }

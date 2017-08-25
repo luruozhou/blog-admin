@@ -20,27 +20,9 @@ gulp.task("compile-server", function() {
         .pipe(gulp.dest("dest/server"));
 });
 
-gulp.task("compile-routes", function() {
-    return gulp.src("routes/**/*.js")
-        .pipe(plumber())
-        .pipe(babel({
-            presets: ['es2015', 'stage-0'],
-            "plugins": [
-                ["transform-runtime", {
-                  "polyfill": false,
-                  "regenerator": true
-                }]
-              ]
-            }))
-        .pipe(gulp.dest("dest/routes"));
-});
-
 gulp.task('build',  function() {
-
     gulp.start('compile-server');
-    gulp.start('compile-routes');
     gulp.watch('server/**/*.js', ['compile-server']);
-    gulp.watch('routes/**/*.js', ['compile-routes']);
 });
 
 gulp.task("prod-server", function() {
@@ -58,22 +40,6 @@ gulp.task("prod-server", function() {
         .pipe(gulp.dest("dest-tmp/server"));
 });
 
-gulp.task("prod-routes", function() {
-    return gulp.src("routes/**/*.js")
-        .pipe(plumber())
-        .pipe(babel({
-            presets: ['es2015', 'stage-0'],
-            "plugins": [
-                ["transform-runtime", {
-                    "polyfill": false,
-                    "regenerator": true
-                }]
-            ]
-        }))
-        .pipe(gulp.dest("dest-tmp/routes"));
-});
-
 gulp.task('prod',function() {
     gulp.start('prod-server');
-    gulp.start('prod-routes');
 });

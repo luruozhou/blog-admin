@@ -4,6 +4,7 @@ import  UserGroupModel from "../modules/mysql-models/users-groups-model";
 import {Permission} from './core/permissionProvider';
 import {defaultAvatar} from '../config-core/index';
 import * as Bcrypt from 'bcrypt-nodejs';
+import ApiError, {ErrorCode} from "./core/apiError";
 
 export function getUserPermission(userIdOrRecord) {
     return Promise.resolve()
@@ -27,7 +28,7 @@ export function register(userInfo) {
         .find({where: {user_name: userInfo.userName}})
         .then(userRecord => {
             if (userRecord) {
-                throw '该用户已经注册.';
+                throw new ApiError({errorCode: ErrorCode.hasRegistered, message: "该用户已经注册"});
             } else {
                 let passwordBcrypt = Bcrypt.hashSync(userInfo.password);
                 let avatar = userInfo.avatar || defaultAvatar;
@@ -52,13 +53,4 @@ export function register(userInfo) {
                     })
             }
         })
-}
-
-export function getLoginRedirectUrl(req, user) {
-    var isAdmin = user.permission.has(Permission.admin);
-    if (isAdmin) {
-        return Promise.resolve('/admin/addArticle');
-    } else {
-        return Promise.resolve('/');
-    }
 }
