@@ -33,6 +33,7 @@ function buildRequestUser(userRecord, basePermission) {
 export var userProvider = {
     authenticate: async(req, res) => {
         let access_token = req.body.access_token || req.headers.access_token || req.query.access_token;
+        console.log(access_token,'===token');
         let uid;
         var {userName, password} = req.body;
 
