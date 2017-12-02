@@ -504,7 +504,6 @@ function runWatcherWatch(watchers, callback) {
 }
 
 function main() {
-    var apps = process.argv.slice(2);
 
     var nodeForTsc = DEFAULT_NODE_CMD;
     var nodeForZmWwww = DEFAULT_NODE_CMD;
@@ -523,7 +522,6 @@ function main() {
     });
 
     watchers = generateWatchers({
-        apps: apps,
         tsc: tsc
     });
 
