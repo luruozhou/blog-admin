@@ -4,9 +4,12 @@ import {Context, Request, Response} from 'koa';
 // Node 自带包
 import * as FS from 'fs';
 import * as Path from 'path';
-import * as ThenFail from './libs/thenfail';
-import {IO} from './libs/utils';
 
+
+import {IO, wait} from './libs/utils';
+import * as config from './config';
+import * as Debug from './libs/debug';
+import sequelize from './modules/core/sequelize';
 const cwd = process.cwd();
 
 type APIHandler = any;
@@ -73,7 +76,7 @@ export class APIRouter {
                 testDataDir = 'test-data') {
         apiFileDir = Path.resolve(cwd, './server', apiFileDir);
 
-        this.testDataDir = Path.resolve('../server', testDataDir);
+        this.testDataDir = Path.resolve(cwd, '../server', testDataDir);
 
         let apiFiles = IO.listFiles(apiFileDir, APIRouter.jsExtRegex);
 
@@ -123,17 +126,50 @@ export class APIRouter {
             path = methodPath;
         }
 
-        koaMethod.call(this.router, '/test', async (ctx: Context) => {
-            let anonymous: boolean;
-            let startTime = Date.now();
+        let testDataPath = apiMethod.test;
 
-            ///{debug log
-            // Debug.log(req, `${req.method.toUpperCase()} ${req.originalUrl}`);
-            ///}
-            let data = await apiMethod.handler.call(apiMethod.target, ctx);
-            ctx.body = data;
-            
+        if (!testDataPath) {
+            if (methodName == 'default') {
+                testDataPath = this.testDataDir + basePath;
+            } else {
+                testDataPath = this.testDataDir + basePath + '/' + pathFriendlyMethodName;
+            }
+        } else if (testDataPath.charAt(0) != '/') {
+            testDataPath = this.testDataDir + basePath + '/' + testDataPath;
+        } else {
+            testDataPath = this.testDataDir + testDataPath;
+        }
 
+        if (!APIRouter.jsExtRegex.test(testDataPath)) {
+            testDataPath += '.js';
+        }
+
+        testDataPath = Path.resolve(testDataPath);
+
+        koaMethod.call(this.router, path, async (ctx: Context) => {
+
+            //debug log
+            Debug.log(ctx.request, `${ctx.request.method.toUpperCase()} ${ctx.request.originalUrl}`);
+            //
+
+            let data;
+            try {
+                if (config.test.api.useTestData) {
+                    if (FS.existsSync(testDataPath)) {
+                        console.log(`loads test data from "${testDataPath}".`);
+                        await wait(config.test.api.testDataDelay || 0);
+                        data = require(testDataPath);
+                    } else {
+                        console.log(`test data "${testDataPath}" does not exist, will call handler.`);
+                        data = await apiMethod.handler.call(apiMethod.target, ctx);
+                    }
+                } else {
+                    data = await apiMethod.handler.call(apiMethod.target, ctx);
+                }
+            } catch (e) {
+                console.log(e, 'catch')
+            }
+            ctx.response.body = (typeof data);
         });
     }
 }

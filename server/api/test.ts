@@ -12,10 +12,12 @@ export default class API {
      */
     @api({
         // 添加 API 相关配置
-        method: 'get'
+        method: 'get',
+        path: /\/(\d+)/
     })
-    static test1(ctx:Context): ThenFail<any> | any {
-        return 3;
+    static async test1(ctx: Context): Promise<any> {
+        let query = ctx.query;
+        return query.name;
     }
 }
 
