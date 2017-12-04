@@ -76,7 +76,7 @@ exports.Router = function (app) {
 function getJson(data, error) {
     let res;
     if (error) {
-        console.log(1,error instanceof ApiError,error instanceof Error)
+        console.log(1, error instanceof ApiError, error instanceof Error)
         if (typeof error === 'string') {
             res = {
                 code: 0,
@@ -87,6 +87,12 @@ function getJson(data, error) {
             if (error.errorCode === ErrorCode.accessTokenExpired || error.errorCode === ErrorCode.accessTokenMissMatch) {
                 res = {
                     code: 2,
+                    data: null,
+                    message: error.message
+                }
+            } else if (error.errorCode === ErrorCode.noPermission) {
+                res = {
+                    code: 403,
                     data: null,
                     message: error.message
                 }
