@@ -4,11 +4,10 @@ import * as Lodash from 'lodash';
 import * as moment from 'moment';
 
 import * as ThenFail from './thenfail';
-// import { EventEmitter, IO } from './utils';
-import * as zmConfig from './config-core';
+import * as mtConfig from './config-core';
 
 let uid: number = Date.now();
-let logDir = zmConfig.debugLogDir;
+let logDir = mtConfig.debugLogDir;
 let writer: FS.WriteStream;
 let createAtHour: number;
 
@@ -19,7 +18,7 @@ interface Target {
 
 let nextLogId = Date.now();
 
-let expireLimit = zmConfig.debugLogExpireLimit;
+let expireLimit = mtConfig.debugLogExpireLimit;
 
 FS.mkdirpSync(logDir);
 
@@ -83,7 +82,7 @@ export function getLogs(): ThenFail<LogFile[]> {
 
 
 function _log(target: Target | any, type: string, args: string[]): void {
-    if (!zmConfig.isDebugMode) {
+    if (!mtConfig.isDebugMode) {
         return;
     }
 

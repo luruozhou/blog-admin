@@ -1,6 +1,5 @@
 import {Context, Request, Response} from 'koa';
 
-import * as ThenFail from '../libs/thenfail';
 import {api} from '../apiRouter';
 
 // import {Validator} from '../libs/utils';

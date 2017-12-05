@@ -5,7 +5,7 @@ import * as API from '../../modules/core/api-error';
 /**
  * 封装RequestH请求为Promise对象
  */
-export class ZMRequest {
+export class MTRequest {
     constructor(options: {
         token?: string,
         host?: string
@@ -105,7 +105,7 @@ export class ZMRequest {
 /**
  * 请求方法
  */
-export let ZMethod = {
+export let Method = {
     POST: 'POST',
     GET: 'GET',
     PUT: 'PUT',
