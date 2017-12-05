@@ -5,6 +5,7 @@
 /dest/config.*
 npm-debug.log
 /*.log
+log/
 
 .settings/settings.json
 # Visual Studio folders that our project don't use.
